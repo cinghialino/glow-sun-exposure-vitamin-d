@@ -2,29 +2,34 @@
   "config": {
     "step": {
       "user": {
-        "title": "Glow: Target Vitamin D Dose",
-        "description": "Select your target daily Vitamin D dose in IU (recommended range: 1000-4000, default 2000)."
-      },
-      "uv": {
-        "title": "Glow: UV Index Sensor",
-        "description": "Optionally select a sensor entity that provides the current UV index (e.g., from OpenWeatherMap). Leave blank to use monthly averages."
+        "title": "Configure Glow: Sun Exposure for Vitamin D",
+        "description": "Set up your Vitamin D sun exposure calculator. This integration creates 6 sensors (one for each Fitzpatrick skin type) that calculate the minutes of midday sun exposure needed to maintain your target Vitamin D level.\n\n**Important Medical Disclaimer:** This is for informational purposes only and is not medical advice. Always consult with a healthcare provider before making decisions about sun exposure. Excessive sun exposure increases skin cancer risk.",
+        "data": {
+          "target_iu": "Target Vitamin D production (IU)",
+          "uv_sensor": "UV Index sensor (optional)"
+        },
+        "data_description": {
+          "target_iu": "Daily Vitamin D target in International Units (1000-4000 IU). Default: 2000 IU for maintenance of ~50 nmol/L blood level with 25% body exposure.",
+          "uv_sensor": "Select a UV index sensor for real-time calculations. If not selected, will use monthly averages for your latitude."
+        }
       }
     },
     "abort": {
-      "already_configured": "This integration is already set up."
-    },
-    "error": {
-      "invalid_sensor": "Selected UV sensor is invalid or not available."
+      "already_configured": "This integration is already configured. Only one instance is allowed."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Glow Options",
-        "description": "Update your target IU or UV sensor.",
+        "title": "Configure Glow Options",
+        "description": "Adjust your Vitamin D calculator settings.",
         "data": {
-          "target_iu": "Target Vitamin D Dose (IU)",
-          "uv_entity": "UV Index Sensor"
+          "target_iu": "Target Vitamin D production (IU)",
+          "uv_sensor": "UV Index sensor (optional)"
+        },
+        "data_description": {
+          "target_iu": "Daily Vitamin D target in International Units (1000-4000 IU)",
+          "uv_sensor": "UV index sensor for real-time calculations"
         }
       }
     }
