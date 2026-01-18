@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from datetime import datetime
 import logging
-import math
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -14,8 +13,6 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTime
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.sun import get_astral_location
-from homeassistant.util import dt as dt_util
 
 from .const import (
     BASELINE_MINUTES,
@@ -128,7 +125,14 @@ class GlowSensor(SensorEntity):
     def _calculate_minutes(self) -> float | str:
         """Calculate required minutes of sun exposure."""
         # Check if sun is above horizon
-        if not self._is_sun_up():
+        sun_is_up = self._is_sun_up()
+        _LOGGER.debug(
+            "Sun status check for %s: %s",
+            self.entity_id,
+            "above horizon" if sun_is_up else "below horizon"
+        )
+        
+        if not sun_is_up:
             return STATE_SUN_BELOW_HORIZON
         
         # Get UV index
@@ -159,12 +163,14 @@ class GlowSensor(SensorEntity):
     def _is_sun_up(self) -> bool:
         """Check if sun is above horizon."""
         try:
-            location = get_astral_location(self.hass)
-            now = dt_util.now()
-            sun = location.sun(now, local=True)
+            # Use Home Assistant's sun entity directly
+            sun_state = self.hass.states.get("sun.sun")
+            if sun_state is None:
+                _LOGGER.warning("sun.sun entity not found")
+                return False
             
-            # Check if current time is between sunrise and sunset
-            return sun["sunrise"] <= now <= sun["sunset"]
+            _LOGGER.debug("sun.sun state: %s", sun_state.state)
+            return sun_state.state == "above_horizon"
         except Exception as err:
             _LOGGER.error("Error checking sun position: %s", err)
             return False
