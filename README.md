@@ -21,7 +21,9 @@ A Home Assistant custom integration that calculates the estimated minutes of mid
 
 ## Features
 
-- **6 Automatic Sensors**: Creates one sensor for each Fitzpatrick skin type (Type 1-6)
+- **12 Automatic Sensors**: Creates two sensors for each Fitzpatrick skin type (Type 1-6)
+  - **Minutes sensors**: Show required sun exposure time in minutes
+  - **Status sensors**: Show descriptive status (e.g., "Insufficient UVB", "Quick exposure needed")
 - **Smart Calculations**: Based on NIH research ([PMC11124381](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11124381/)) and NILU skin type data
 - **Real-time UV Integration**: Optionally use a UV index sensor for dynamic calculations
 - **Location-Aware**: Uses your Home Assistant latitude to determine monthly UV averages
@@ -91,19 +93,30 @@ You can change settings anytime:
 
 ### Sensor Management
 
-The integration creates 6 sensors:
-- `sensor.glow_type_1_minutes` - Very Fair skin
-- `sensor.glow_type_2_minutes` - Fair skin
-- `sensor.glow_type_3_minutes` - Medium skin
-- `sensor.glow_type_4_minutes` - Olive skin
-- `sensor.glow_type_5_minutes` - Brown skin
-- `sensor.glow_type_6_minutes` - Dark Brown/Black skin
+The integration creates 12 sensors (2 per skin type):
+
+**Minutes Sensors:**
+- `sensor.glow_type_1` - Very Fair skin (minutes)
+- `sensor.glow_type_2` - Fair skin (minutes)
+- `sensor.glow_type_3` - Medium skin (minutes)
+- `sensor.glow_type_4` - Olive skin (minutes)
+- `sensor.glow_type_5` - Brown skin (minutes)
+- `sensor.glow_type_6` - Dark Brown/Black skin (minutes)
+
+**Status Sensors:**
+- `sensor.glow_type_1_status` - Status description
+- `sensor.glow_type_2_status` - Status description
+- `sensor.glow_type_3_status` - Status description
+- `sensor.glow_type_4_status` - Status description
+- `sensor.glow_type_5_status` - Status description
+- `sensor.glow_type_6_status` - Status description
 
 **Tip**: Disable unused skin types in Settings → Devices & Services → Glow → Entities to reduce clutter.
 
 ## Sensor Attributes
 
-Each sensor provides these attributes:
+### Minutes Sensors
+Each minutes sensor provides these attributes:
 
 - `skin_type`: Numeric type (1-6)
 - `skin_type_name`: Full description (e.g., "Type 3 (Medium)")
@@ -114,14 +127,30 @@ Each sensor provides these attributes:
 - `calculation_method`: "real-time UV sensor" or "monthly average for latitude"
 - `status`: Special states like "Insufficient UVB" or "Sun below horizon"
 
+### Status Sensors
+Each status sensor provides these attributes:
+
+- `skin_type`: Numeric type (1-6)
+- `skin_type_name`: Full description
+- `minutes_needed`: Required minutes (when available)
+- `uv_index`: Current UV index (when available)
+
 ## Sensor States
 
-Sensors display:
+### Minutes Sensors display:
 - **Numeric value** (e.g., `12.5`): Minutes of midday sun exposure needed
 - **`unknown`**: Sun is below horizon OR insufficient UVB (< 3 UV index)
 - **`unavailable`**: Integration error or loading
 
-Check the `status` attribute for details when state is `unknown`.
+### Status Sensors display:
+- **"Sun below horizon"**: Currently nighttime
+- **"Insufficient UVB"**: UV index too low (< 3) for vitamin D production
+- **"Quick exposure needed"**: Less than 15 minutes required
+- **"Moderate exposure needed"**: 15-30 minutes required
+- **"Extended exposure needed"**: 30-60 minutes required
+- **"Long exposure needed"**: More than 60 minutes required
+
+Check the sensor attributes for detailed information when state is descriptive.
 
 ## Usage Examples
 
@@ -131,15 +160,18 @@ Check the `status` attribute for details when state is `unknown`.
 type: entities
 title: Daily Sun Exposure for Vitamin D
 entities:
-  - entity: sensor.glow_type_3_minutes
-    name: My Skin Type
-    icon: mdi:white-balance-sunny
+  - entity: sensor.glow_type_3
+    name: Minutes Needed
+    icon: mdi:timer-outline
+  - entity: sensor.glow_type_3_status
+    name: Status
+    icon: mdi:information-outline
   - type: attribute
-    entity: sensor.glow_type_3_minutes
+    entity: sensor.glow_type_3
     attribute: recommended_time
     name: Best Time
   - type: attribute
-    entity: sensor.glow_type_3_minutes
+    entity: sensor.glow_type_3
     attribute: uv_index_used
     name: Current UV Index
 ```
@@ -152,23 +184,20 @@ trigger:
   - platform: time
     at: "10:00:00"
 condition:
-  - condition: numeric_state
-    entity_id: sensor.glow_type_3_minutes
-    below: 30
+  - condition: state
+    entity_id: sensor.glow_type_3_status
+    state: "Quick exposure needed"
   - condition: state
     entity_id: sun.sun
     state: "above_horizon"
-  - condition: numeric_state
-    entity_id: sensor.glow_type_3_minutes
-    above: 0
 action:
   - service: notify.mobile_app
     data:
       title: "Get Your Glow! ☀️"
       message: >
-        You need {{ states('sensor.glow_type_3_minutes') }} minutes 
-        of midday sun today for your Vitamin D. UV index: 
-        {{ state_attr('sensor.glow_type_3_minutes', 'uv_index_used') }}
+        You need {{ states('sensor.glow_type_3') }} minutes 
+        of midday sun today for your Vitamin D. 
+        Status: {{ states('sensor.glow_type_3_status') }}
 ```
 
 ### Conditional Card (Show Only When Sun is Up)
@@ -176,16 +205,16 @@ action:
 ```yaml
 type: conditional
 conditions:
-  - entity: sensor.glow_type_3_minutes
-    state_not: "unknown"
+  - entity: sensor.glow_type_3_status
+    state_not: "Sun below horizon"
 card:
   type: glance
   title: Sun Exposure Needed Today
   entities:
-    - entity: sensor.glow_type_3_minutes
+    - entity: sensor.glow_type_3
       name: Minutes
-    - entity: sun.sun
-      name: Sun Position
+    - entity: sensor.glow_type_3_status
+      name: Status
 ```
 
 ### Mushroom Chips Card (requires mushroom custom card)
@@ -337,7 +366,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Disclaimer
 
-Again, for emphasis: **This tool is for educational purposes only.** Vitamin D status should be monitored by healthcare professionals through blood tests (25(OH)D levels). Sun exposure carries risks. Use sun protection after the calculated exposure time. When in doubt, consult your doctor. Thanks.
+Again, for emphasis: **This tool is for educational purposes only.** Vitamin D status should be monitored by healthcare professionals through blood tests (25(OH)D levels). Sun exposure carries risks. Use sun protection after the calculated exposure time. When in doubt, consult your doctor.
 
 ---
 
