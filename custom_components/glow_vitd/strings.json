@@ -1,0 +1,32 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Glow: Target Vitamin D Dose",
+        "description": "Select your target daily Vitamin D dose in IU (recommended range: 1000-4000, default 2000)."
+      },
+      "uv": {
+        "title": "Glow: UV Index Sensor",
+        "description": "Optionally select a sensor entity that provides the current UV index (e.g., from OpenWeatherMap). Leave blank to use monthly averages."
+      }
+    },
+    "abort": {
+      "already_configured": "This integration is already set up."
+    },
+    "error": {
+      "invalid_sensor": "Selected UV sensor is invalid or not available."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Glow Options",
+        "description": "Update your target IU or UV sensor.",
+        "data": {
+          "target_iu": "Target Vitamin D Dose (IU)",
+          "uv_entity": "UV Index Sensor"
+        }
+      }
+    }
+  }
+}
