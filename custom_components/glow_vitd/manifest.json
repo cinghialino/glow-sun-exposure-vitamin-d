@@ -1,0 +1,11 @@
+{
+  "domain": "glow_vitd",
+  "name": "Glow: Sun Exposure for Vitamin D",
+  "version": "1.2.0",
+  "documentation": "https://github.com/cinghialino/glow-sun-exposure-vitamin-d/README.md",
+  "requirements": [],
+  "dependencies": ["sun"],
+  "codeowners": ["@cinghialino"],
+  "config_flow": true,
+  "iot_class": "calculated"
+}
