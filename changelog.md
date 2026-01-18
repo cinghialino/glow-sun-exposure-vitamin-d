@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-01-18
+
+### Changed
+- **BREAKING**: Renamed minutes sensors from "Type X minutes" to just "Type X" (using unit definition instead)
+- Sensor entity IDs changed from `sensor.glow_type_X_minutes` to `sensor.glow_type_X`
+- Fixed sun position detection to use `sun.sun` entity directly (more reliable)
+
+### Added
+- 6 new status sensors (one per skin type): `sensor.glow_type_X_status`
+- Status sensors provide human-readable descriptions:
+  - "Sun below horizon"
+  - "Insufficient UVB"
+  - "Quick exposure needed" (< 15 min)
+  - "Moderate exposure needed" (15-30 min)
+  - "Extended exposure needed" (30-60 min)
+  - "Long exposure needed" (> 60 min)
+- Status sensors include `minutes_needed` and `uv_index` attributes
+- Debug logging for sun position checks
+
+### Fixed
+- Sun position detection now works correctly during daytime
+- Integration now properly detects when sun is above horizon
+
+### Migration Notes
+If upgrading from 1.0.0:
+- Minutes sensor entity IDs have changed
+- Update your automations and dashboards to use new entity IDs
+- Old entity IDs: `sensor.glow_type_X_minutes`
+- New entity IDs: `sensor.glow_type_X` (minutes) and `sensor.glow_type_X_status`
+
 ## [1.0.0] - 2026-01-18
 
 ### Added
