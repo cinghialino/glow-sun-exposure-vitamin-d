@@ -6,6 +6,12 @@
 
 A Home Assistant custom integration that calculates the estimated minutes of midday sun exposure needed to maintain sufficient Vitamin D levels based on your location, time of year, skin type (Fitzpatrick scale 1-6), and optional real-time UV index data.
 
+---
+
+☕ **[Support this project on Ko-fi](https://ko-fi.com/cinghialino)**
+
+---
+
 ## ⚠️ Important Medical Disclaimer
 
 **THIS IS NOT MEDICAL ADVICE.** This integration is for informational and educational purposes only. It does not replace professional medical advice, diagnosis, or treatment. Always consult with a qualified healthcare provider before making any decisions about sun exposure, supplementation, or health-related matters.
@@ -21,9 +27,11 @@ A Home Assistant custom integration that calculates the estimated minutes of mid
 
 ## Features
 
-- **12 Automatic Sensors**: Creates two sensors for each Fitzpatrick skin type (Type 1-6)
-  - **Minutes sensors**: Show required sun exposure time in minutes
-  - **Status sensors**: Show descriptive status (e.g., "Insufficient UVB", "Quick exposure needed")
+- **14 Automatic Sensors**: Creates sensors for comprehensive vitamin D tracking
+  - **6 Minutes sensors**: Show required sun exposure time in minutes (Type 1-6)
+  - **6 Status sensors**: Show descriptive status for each skin type
+  - **1 UV Index sensor**: Displays current UV index being used in calculations
+  - **1 Calculation Method sensor**: Shows whether using real-time UV or monthly average
 - **Smart Calculations**: Based on NIH research ([PMC11124381](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11124381/)) and NILU skin type data
 - **Real-time UV Integration**: Optionally use a UV index sensor for dynamic calculations
 - **Location-Aware**: Uses your Home Assistant latitude to determine monthly UV averages
@@ -93,23 +101,27 @@ You can change settings anytime:
 
 ### Sensor Management
 
-The integration creates 12 sensors (2 per skin type):
+The integration creates 14 sensors:
 
 **Minutes Sensors:**
-- `sensor.glow_type_1` - Very Fair skin (minutes)
-- `sensor.glow_type_2` - Fair skin (minutes)
-- `sensor.glow_type_3` - Medium skin (minutes)
-- `sensor.glow_type_4` - Olive skin (minutes)
-- `sensor.glow_type_5` - Brown skin (minutes)
-- `sensor.glow_type_6` - Dark Brown/Black skin (minutes)
+- `sensor.glow_sun_exposure_type_1` - Very Fair skin (minutes)
+- `sensor.glow_sun_exposure_type_2` - Fair skin (minutes)
+- `sensor.glow_sun_exposure_type_3` - Medium skin (minutes)
+- `sensor.glow_sun_exposure_type_4` - Olive skin (minutes)
+- `sensor.glow_sun_exposure_type_5` - Brown skin (minutes)
+- `sensor.glow_sun_exposure_type_6` - Dark Brown/Black skin (minutes)
 
 **Status Sensors:**
-- `sensor.glow_type_1_status` - Status description
-- `sensor.glow_type_2_status` - Status description
-- `sensor.glow_type_3_status` - Status description
-- `sensor.glow_type_4_status` - Status description
-- `sensor.glow_type_5_status` - Status description
-- `sensor.glow_type_6_status` - Status description
+- `sensor.glow_sun_exposure_type_1_status` - Status description
+- `sensor.glow_sun_exposure_type_2_status` - Status description
+- `sensor.glow_sun_exposure_type_3_status` - Status description
+- `sensor.glow_sun_exposure_type_4_status` - Status description
+- `sensor.glow_sun_exposure_type_5_status` - Status description
+- `sensor.glow_sun_exposure_type_6_status` - Status description
+
+**Utility Sensors:**
+- `sensor.glow_sun_exposure_uv_index` - Current UV index being used
+- `sensor.glow_sun_exposure_calculation_method` - Data source (real-time sensor or monthly average)
 
 **Tip**: Disable unused skin types in Settings → Devices & Services → Glow → Entities to reduce clutter.
 
@@ -160,20 +172,20 @@ Check the sensor attributes for detailed information when state is descriptive.
 type: entities
 title: Daily Sun Exposure for Vitamin D
 entities:
-  - entity: sensor.glow_type_3
+  - entity: sensor.glow_sun_exposure_type_3
     name: Minutes Needed
     icon: mdi:timer-outline
-  - entity: sensor.glow_type_3_status
+  - entity: sensor.glow_sun_exposure_type_3_status
     name: Status
     icon: mdi:information-outline
+  - entity: sensor.glow_sun_exposure_uv_index
+    name: UV Index
+  - entity: sensor.glow_sun_exposure_calculation_method
+    name: Data Source
   - type: attribute
-    entity: sensor.glow_type_3
+    entity: sensor.glow_sun_exposure_type_3
     attribute: recommended_time
     name: Best Time
-  - type: attribute
-    entity: sensor.glow_type_3
-    attribute: uv_index_used
-    name: Current UV Index
 ```
 
 ### Automation: Morning Sun Reminder
@@ -185,7 +197,7 @@ trigger:
     at: "10:00:00"
 condition:
   - condition: state
-    entity_id: sensor.glow_type_3_status
+    entity_id: sensor.glow_sun_exposure_type_3_status
     state: "Quick exposure needed"
   - condition: state
     entity_id: sun.sun
@@ -195,9 +207,9 @@ action:
     data:
       title: "Get Your Glow! ☀️"
       message: >
-        You need {{ states('sensor.glow_type_3') }} minutes 
+        You need {{ states('sensor.glow_sun_exposure_type_3') }} minutes 
         of midday sun today for your Vitamin D. 
-        Status: {{ states('sensor.glow_type_3_status') }}
+        UV Index: {{ states('sensor.glow_sun_exposure_uv_index') }}
 ```
 
 ### Conditional Card (Show Only When Sun is Up)
@@ -205,16 +217,18 @@ action:
 ```yaml
 type: conditional
 conditions:
-  - entity: sensor.glow_type_3_status
+  - entity: sensor.glow_sun_exposure_type_3_status
     state_not: "Sun below horizon"
 card:
   type: glance
   title: Sun Exposure Needed Today
   entities:
-    - entity: sensor.glow_type_3
+    - entity: sensor.glow_sun_exposure_type_3
       name: Minutes
-    - entity: sensor.glow_type_3_status
+    - entity: sensor.glow_sun_exposure_type_3_status
       name: Status
+    - entity: sensor.glow_sun_exposure_uv_index
+      name: UV Index
 ```
 
 ### Mushroom Chips Card (requires mushroom custom card)
