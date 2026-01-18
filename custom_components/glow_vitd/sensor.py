@@ -57,6 +57,12 @@ async def async_setup_entry(
             )
         )
     
+    # Add UV index sensor
+    entities.append(GlowUVIndexSensor(coordinator, entry))
+    
+    # Add calculation method sensor
+    entities.append(GlowCalculationMethodSensor(coordinator, entry))
+    
     async_add_entities(entities)
 
 
@@ -81,6 +87,7 @@ class GlowMinutesSensor(SensorEntity):
         self.skin_type = skin_type
         self._attr_unique_id = f"{entry.entry_id}_type_{skin_type}_minutes"
         self._attr_name = f"Type {skin_type}"
+        self._attr_entity_id = f"sensor.glow_sun_exposure_type_{skin_type}"
         
         # Device info for grouping
         self._attr_device_info = {
@@ -88,7 +95,7 @@ class GlowMinutesSensor(SensorEntity):
             "name": "Glow: Sun Exposure for Vitamin D",
             "manufacturer": "Glow",
             "model": "Sun Exposure Calculator",
-            "sw_version": "1.0.0",
+            "sw_version": "1.0.2",
         }
 
     @property
@@ -253,6 +260,190 @@ class GlowMinutesSensor(SensorEntity):
         )
 
 
+class GlowUVIndexSensor(SensorEntity):
+    """Sensor that displays the current UV index being used."""
+
+    _attr_has_entity_name = True
+    _attr_icon = "mdi:weather-sunny"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def __init__(self, coordinator, entry: ConfigEntry) -> None:
+        """Initialize the sensor."""
+        self.coordinator = coordinator
+        self.entry = entry
+        self._attr_unique_id = f"{entry.entry_id}_uv_index"
+        self._attr_name = "UV Index"
+        self._attr_entity_id = "sensor.glow_sun_exposure_uv_index"
+        
+        # Device info for grouping
+        self._attr_device_info = {
+            "identifiers": {(DOMAIN, entry.entry_id)},
+            "name": "Glow: Sun Exposure for Vitamin D",
+            "manufacturer": "Glow",
+            "model": "Sun Exposure Calculator",
+            "sw_version": "1.0.2",
+        }
+
+    @property
+    def native_value(self) -> float | None:
+        """Return the UV index."""
+        try:
+            # First try configured sensor
+            sensor_value = self._get_uv_sensor_value()
+            if sensor_value is not None:
+                return round(sensor_value, 1)
+            
+            # Fall back to monthly average
+            monthly_avg = self._get_monthly_average_uv()
+            return round(monthly_avg, 1)
+        except Exception as err:
+            _LOGGER.error("Error getting UV index: %s", err)
+            return None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, any]:
+        """Return additional attributes."""
+        attributes = {}
+        
+        uv_sensor = self.entry.options.get(CONF_UV_SENSOR)
+        if uv_sensor:
+            state = self.hass.states.get(uv_sensor)
+            if state and state.state not in ("unknown", "unavailable"):
+                attributes["source"] = "UV sensor"
+                attributes["sensor_entity"] = uv_sensor
+            else:
+                attributes["source"] = "Monthly average"
+                attributes["sensor_entity"] = uv_sensor
+                attributes["sensor_status"] = "unavailable"
+        else:
+            attributes["source"] = "Monthly average"
+            attributes["latitude"] = self.hass.config.latitude
+        
+        return attributes
+
+    def _get_uv_sensor_value(self) -> float | None:
+        """Get UV index from configured sensor."""
+        uv_sensor = self.entry.options.get(CONF_UV_SENSOR)
+        if not uv_sensor:
+            return None
+        
+        state = self.hass.states.get(uv_sensor)
+        if state is None or state.state in ("unknown", "unavailable"):
+            return None
+        
+        try:
+            return float(state.state)
+        except (ValueError, TypeError):
+            _LOGGER.warning("Could not parse UV sensor value: %s", state.state)
+            return None
+
+    def _get_monthly_average_uv(self) -> float:
+        """Get monthly average UV index based on latitude."""
+        latitude = self.hass.config.latitude
+        abs_lat = abs(latitude)
+        
+        # Determine latitude range
+        if abs_lat <= 15:
+            lat_range = "0-15"
+        elif abs_lat <= 30:
+            lat_range = "15-30"
+        elif abs_lat <= 45:
+            lat_range = "30-45"
+        elif abs_lat <= 60:
+            lat_range = "45-60"
+        else:
+            lat_range = "60-75"
+        
+        # Get current month (0-11)
+        month = datetime.now().month - 1
+        
+        # Adjust for southern hemisphere (reverse seasons)
+        if latitude < 0:
+            month = (month + 6) % 12
+        
+        # Get UV index from lookup table
+        uv_index = MONTHLY_UV_DATA[lat_range][month]
+        
+        return float(uv_index)
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        self.async_write_ha_state()
+
+    async def async_added_to_hass(self) -> None:
+        """When entity is added to hass."""
+        await super().async_added_to_hass()
+        self.async_on_remove(
+            self.coordinator.async_add_listener(self._handle_coordinator_update)
+        )
+
+
+class GlowCalculationMethodSensor(SensorEntity):
+    """Sensor that displays the calculation method being used."""
+
+    _attr_has_entity_name = True
+    _attr_icon = "mdi:calculator"
+
+    def __init__(self, coordinator, entry: ConfigEntry) -> None:
+        """Initialize the sensor."""
+        self.coordinator = coordinator
+        self.entry = entry
+        self._attr_unique_id = f"{entry.entry_id}_calculation_method"
+        self._attr_name = "Calculation method"
+        self._attr_entity_id = "sensor.glow_sun_exposure_calculation_method"
+        
+        # Device info for grouping
+        self._attr_device_info = {
+            "identifiers": {(DOMAIN, entry.entry_id)},
+            "name": "Glow: Sun Exposure for Vitamin D",
+            "manufacturer": "Glow",
+            "model": "Sun Exposure Calculator",
+            "sw_version": "1.0.2",
+        }
+
+    @property
+    def native_value(self) -> str:
+        """Return the calculation method."""
+        uv_sensor = self.entry.options.get(CONF_UV_SENSOR)
+        if uv_sensor:
+            state = self.hass.states.get(uv_sensor)
+            if state and state.state not in ("unknown", "unavailable"):
+                return "Real-time UV sensor"
+            else:
+                return "Monthly average (sensor unavailable)"
+        return "Monthly average for latitude"
+
+    @property
+    def extra_state_attributes(self) -> dict[str, any]:
+        """Return additional attributes."""
+        attributes = {
+            "target_iu": self.entry.options.get(CONF_TARGET_IU, DEFAULT_TARGET_IU),
+            "latitude": self.hass.config.latitude,
+        }
+        
+        uv_sensor = self.entry.options.get(CONF_UV_SENSOR)
+        if uv_sensor:
+            attributes["uv_sensor_entity"] = uv_sensor
+            state = self.hass.states.get(uv_sensor)
+            if state:
+                attributes["uv_sensor_state"] = state.state
+        
+        return attributes
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        self.async_write_ha_state()
+
+    async def async_added_to_hass(self) -> None:
+        """When entity is added to hass."""
+        await super().async_added_to_hass()
+        self.async_on_remove(
+            self.coordinator.async_add_listener(self._handle_coordinator_update)
+        )
+
+
 class GlowStatusSensor(SensorEntity):
     """Representation of a Glow status sensor."""
 
@@ -271,6 +462,7 @@ class GlowStatusSensor(SensorEntity):
         self.skin_type = skin_type
         self._attr_unique_id = f"{entry.entry_id}_type_{skin_type}_status"
         self._attr_name = f"Type {skin_type} status"
+        self._attr_entity_id = f"sensor.glow_sun_exposure_type_{skin_type}_status"
         
         # Device info for grouping
         self._attr_device_info = {
