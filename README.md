@@ -44,3 +44,36 @@ entities:
   - entity: sensor.glow_type_5_minutes
     name: Partner's Skin Type (Type 5)
 title: Vitamin D Exposure
+```
+
+### Advanced Mushroom Chips Card (requires mushroom-card custom component)
+```yaml
+type: custom:mushroom-chips-card
+chips:
+  - type: entity
+    entity: sensor.glow_type_3_minutes
+    icon: mdi:sun-wireless
+    content_info: name
+    tap_action:
+      action: more-info
+  - type: conditional
+    conditions:
+      - entity: sensor.glow_type_3_minutes
+        state_not: unknown
+        state_not: 'Insufficient UVB'
+    chip:
+      type: template
+      content: '{{ states(''sensor.glow_type_3_minutes'') }} min today'
+      icon: mdi:clock-outline
+      icon_color: '{{ ''green'' if states(''sensor.glow_type_3_minutes'') | int < 30 else ''orange'' }}'
+```
+This shows exposure time with color-coded urgency if sun is up.
+
+### Screenshots
+soon
+
+### Development & Credits
+
+- Uses HA sun and UV sensor.
+- Data: NIH PMC11124381 (all-sky), NILU models.
+- Issues/PRs welcome!
