@@ -1,10 +1,7 @@
 {
   "name": "Glow: Sun Exposure for Vitamin D",
-  "content_in_root": false,
-  "filename": null,
   "render_readme": true,
   "domains": ["sensor"],
-  "country": "US",
-  "homeassistant": "2025.1.0",
-  "persistent_directory": null
+  "iot_class": "Calculated",
+  "homeassistant": "2023.8.0"
 }
