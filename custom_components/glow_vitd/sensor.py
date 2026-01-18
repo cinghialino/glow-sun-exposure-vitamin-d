@@ -69,7 +69,7 @@ async def async_setup_entry(
 class GlowMinutesSensor(SensorEntity):
     """Representation of a Glow minutes sensor."""
 
-    _attr_has_entity_name = True
+    _attr_has_entity_name = False
     _attr_native_unit_of_measurement = UnitOfTime.MINUTES
     _attr_device_class = SensorDeviceClass.DURATION
     _attr_state_class = SensorStateClass.MEASUREMENT
@@ -86,12 +86,12 @@ class GlowMinutesSensor(SensorEntity):
         self.entry = entry
         self.skin_type = skin_type
         self._attr_unique_id = f"glow_sun_exposure_type_{skin_type}"
-        self._attr_name = f"Type {skin_type}"
+        self._attr_name = f"Glow Sun Exposure Type {skin_type}"
         
         # Device info for grouping
         self._attr_device_info = {
             "identifiers": {(DOMAIN, entry.entry_id)},
-            "name": "Glow: Sun Exposure for Vitamin D",
+            "name": "Glow",
             "manufacturer": "Glow",
             "model": "Sun Exposure Calculator",
             "sw_version": "1.0.2",
@@ -262,7 +262,7 @@ class GlowMinutesSensor(SensorEntity):
 class GlowUVIndexSensor(SensorEntity):
     """Sensor that displays the current UV index being used."""
 
-    _attr_has_entity_name = True
+    _attr_has_entity_name = False
     _attr_icon = "mdi:weather-sunny"
     _attr_state_class = SensorStateClass.MEASUREMENT
 
@@ -271,12 +271,12 @@ class GlowUVIndexSensor(SensorEntity):
         self.coordinator = coordinator
         self.entry = entry
         self._attr_unique_id = f"glow_sun_exposure_uv_index"
-        self._attr_name = "UV Index"
+        self._attr_name = "Glow Sun Exposure UV Index"
         
         # Device info for grouping
         self._attr_device_info = {
             "identifiers": {(DOMAIN, entry.entry_id)},
-            "name": "Glow: Sun Exposure for Vitamin D",
+            "name": "Glow",
             "manufacturer": "Glow",
             "model": "Sun Exposure Calculator",
             "sw_version": "1.0.2",
@@ -380,7 +380,7 @@ class GlowUVIndexSensor(SensorEntity):
 class GlowCalculationMethodSensor(SensorEntity):
     """Sensor that displays the calculation method being used."""
 
-    _attr_has_entity_name = True
+    _attr_has_entity_name = False
     _attr_icon = "mdi:calculator"
 
     def __init__(self, coordinator, entry: ConfigEntry) -> None:
@@ -388,7 +388,7 @@ class GlowCalculationMethodSensor(SensorEntity):
         self.coordinator = coordinator
         self.entry = entry
         self._attr_unique_id = f"glow_sun_exposure_calculation_method"
-        self._attr_name = "Calculation method"
+        self._attr_name = "Glow Sun Exposure Calculation Method"
         
         # Device info for grouping
         self._attr_device_info = {
@@ -444,7 +444,7 @@ class GlowCalculationMethodSensor(SensorEntity):
 class GlowStatusSensor(SensorEntity):
     """Representation of a Glow status sensor."""
 
-    _attr_has_entity_name = True
+    _attr_has_entity_name = False
     _attr_icon = "mdi:information-outline"
 
     def __init__(
@@ -458,7 +458,7 @@ class GlowStatusSensor(SensorEntity):
         self.entry = entry
         self.skin_type = skin_type
         self._attr_unique_id = f"glow_sun_exposure_type_{skin_type}_status"
-        self._attr_name = f"Type {skin_type} status"
+        self._attr_name = f"Glow Sun Exposure Type {skin_type} Status"
         
         # Device info for grouping
         self._attr_device_info = {
