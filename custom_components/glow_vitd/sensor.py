@@ -85,9 +85,8 @@ class GlowMinutesSensor(SensorEntity):
         self.coordinator = coordinator
         self.entry = entry
         self.skin_type = skin_type
-        self._attr_unique_id = f"{entry.entry_id}_type_{skin_type}_minutes"
+        self._attr_unique_id = f"glow_sun_exposure_type_{skin_type}"
         self._attr_name = f"Type {skin_type}"
-        self._attr_entity_id = f"sensor.glow_sun_exposure_type_{skin_type}"
         
         # Device info for grouping
         self._attr_device_info = {
@@ -271,9 +270,8 @@ class GlowUVIndexSensor(SensorEntity):
         """Initialize the sensor."""
         self.coordinator = coordinator
         self.entry = entry
-        self._attr_unique_id = f"{entry.entry_id}_uv_index"
+        self._attr_unique_id = f"glow_sun_exposure_uv_index"
         self._attr_name = "UV Index"
-        self._attr_entity_id = "sensor.glow_sun_exposure_uv_index"
         
         # Device info for grouping
         self._attr_device_info = {
@@ -389,9 +387,8 @@ class GlowCalculationMethodSensor(SensorEntity):
         """Initialize the sensor."""
         self.coordinator = coordinator
         self.entry = entry
-        self._attr_unique_id = f"{entry.entry_id}_calculation_method"
+        self._attr_unique_id = f"glow_sun_exposure_calculation_method"
         self._attr_name = "Calculation method"
-        self._attr_entity_id = "sensor.glow_sun_exposure_calculation_method"
         
         # Device info for grouping
         self._attr_device_info = {
@@ -460,9 +457,8 @@ class GlowStatusSensor(SensorEntity):
         self.coordinator = coordinator
         self.entry = entry
         self.skin_type = skin_type
-        self._attr_unique_id = f"{entry.entry_id}_type_{skin_type}_status"
+        self._attr_unique_id = f"glow_sun_exposure_type_{skin_type}_status"
         self._attr_name = f"Type {skin_type} status"
-        self._attr_entity_id = f"sensor.glow_sun_exposure_type_{skin_type}_status"
         
         # Device info for grouping
         self._attr_device_info = {
