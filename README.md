@@ -14,12 +14,12 @@ Based on [NIH UVB exposure study (PMC11124381)](https://www.ncbi.nlm.nih.gov/pmc
 - Sensor attributes: `recommended_time` (e.g., "Midday (11 AM - 3 PM local time)").
 
 ## Installation
-1. Via HACS: Add repo `https://github.com/cinghialino/glow-sun-exposure-vitamin-d` as Integration.
+1. Via HACS: Add repo ```https://github.com/cinghialino/glow-sun-exposure-vitamin-d``` as Integration.
 2. Restart HA.
 3. Add via Settings > Devices & Services > "Glow: Sun Exposure for Vitamin D".
 4. Configure target IU and optional UV sensor.
 
-Manual: Copy `custom_components/glow_vitd` to your config.
+Manual: Copy ```custom_components/glow_vitd``` to your config.
 
 ## Configuration
 - **Target IU**: Slider (default 2000 IU).
