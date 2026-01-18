@@ -1,0 +1,10 @@
+{
+  "name": "Vitamin D Sun Exposure",
+  "content_in_root": false,
+  "filename": null,
+  "render_readme": true,
+  "domains": ["sensor"],
+  "country": "US",
+  "homeassistant": "2025.1.0",
+  "persistent_directory": null
+}
