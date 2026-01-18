@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-01-18
+
+### Changed
+- **BREAKING**: Changed entity IDs for better naming consistency:
+  - Minutes sensors: `sensor.glow_type_X` → `sensor.glow_sun_exposure_type_X`
+  - Status sensors: `sensor.glow_type_X_status` → `sensor.glow_sun_exposure_type_X_status`
+- Sensor display names remain unchanged (e.g., "Type 1", "Type 1 status")
+
+### Added
+- **UV Index sensor** (`sensor.glow_sun_exposure_uv_index`): Displays the current UV index being used in calculations
+  - Shows real-time value from configured UV sensor, or monthly average as fallback
+  - Attributes show source (UV sensor or monthly average) and sensor entity
+- **Calculation Method sensor** (`sensor.glow_sun_exposure_calculation_method`): Shows data source
+  - Displays "Real-time UV sensor", "Monthly average for latitude", or "Monthly average (sensor unavailable)"
+  - Helps troubleshoot when UV sensor isn't working
+  - Attributes include target IU, latitude, and UV sensor entity info
+- Integration icon for better visual identification in Home Assistant
+- Ko-fi donation link in README for project support
+
+### Fixed
+- All README examples updated with correct entity IDs
+- Documentation now matches actual sensor entity IDs
+
+### Migration Notes
+If upgrading from 1.0.1:
+- Entity IDs have changed again - update your automations and dashboards
+- Old: `sensor.glow_type_3` → New: `sensor.glow_sun_exposure_type_3`
+- Old: `sensor.glow_type_3_status` → New: `sensor.glow_sun_exposure_type_3_status`
+- Two new utility sensors added: UV Index and Calculation Method
+
 ## [1.0.1] - 2026-01-18
 
 ### Changed
