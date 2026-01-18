@@ -37,11 +37,20 @@ async def async_setup_entry(
     """Set up Glow sensors from a config entry."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
     
-    # Create one sensor for each skin type
+    # Create sensors for each skin type (minutes + status)
     entities = []
     for skin_type in range(1, 7):
+        # Add minutes sensor
         entities.append(
-            GlowSensor(
+            GlowMinutesSensor(
+                coordinator,
+                entry,
+                skin_type,
+            )
+        )
+        # Add status sensor
+        entities.append(
+            GlowStatusSensor(
                 coordinator,
                 entry,
                 skin_type,
@@ -51,8 +60,8 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class GlowSensor(SensorEntity):
-    """Representation of a Glow sensor."""
+class GlowMinutesSensor(SensorEntity):
+    """Representation of a Glow minutes sensor."""
 
     _attr_has_entity_name = True
     _attr_native_unit_of_measurement = UnitOfTime.MINUTES
@@ -70,8 +79,8 @@ class GlowSensor(SensorEntity):
         self.coordinator = coordinator
         self.entry = entry
         self.skin_type = skin_type
-        self._attr_unique_id = f"{entry.entry_id}_type_{skin_type}"
-        self._attr_name = f"Type {skin_type} minutes"
+        self._attr_unique_id = f"{entry.entry_id}_type_{skin_type}_minutes"
+        self._attr_name = f"Type {skin_type}"
         
         # Device info for grouping
         self._attr_device_info = {
@@ -151,6 +160,195 @@ class GlowSensor(SensorEntity):
         # Calculate minutes
         # Formula: baseline_minutes * (target_iu / 2000) * skin_multiplier * (7 / uv_index)
         # Baseline: 15 minutes for Type 1 skin at UV 7 produces 2000 IU
+        minutes = (
+            BASELINE_MINUTES 
+            * (target_iu / 2000) 
+            * skin_multiplier 
+            * (7 / uv_index)
+        )
+        
+        return minutes
+
+    def _is_sun_up(self) -> bool:
+        """Check if sun is above horizon."""
+        try:
+            # Use Home Assistant's sun entity directly
+            sun_state = self.hass.states.get("sun.sun")
+            if sun_state is None:
+                _LOGGER.warning("sun.sun entity not found")
+                return False
+            
+            _LOGGER.debug("sun.sun state: %s", sun_state.state)
+            return sun_state.state == "above_horizon"
+        except Exception as err:
+            _LOGGER.error("Error checking sun position: %s", err)
+            return False
+
+    def _get_uv_index(self) -> float:
+        """Get current UV index."""
+        # First try to get from sensor
+        sensor_value = self._get_uv_sensor_value()
+        if sensor_value is not None:
+            return sensor_value
+        
+        # Otherwise use monthly average based on latitude
+        return self._get_monthly_average_uv()
+
+    def _get_uv_sensor_value(self) -> float | None:
+        """Get UV index from configured sensor."""
+        uv_sensor = self.entry.options.get(CONF_UV_SENSOR)
+        if not uv_sensor:
+            return None
+        
+        state = self.hass.states.get(uv_sensor)
+        if state is None or state.state in ("unknown", "unavailable"):
+            return None
+        
+        try:
+            return float(state.state)
+        except (ValueError, TypeError):
+            _LOGGER.warning("Could not parse UV sensor value: %s", state.state)
+            return None
+
+    def _get_monthly_average_uv(self) -> float:
+        """Get monthly average UV index based on latitude."""
+        # Get latitude
+        latitude = self.hass.config.latitude
+        abs_lat = abs(latitude)
+        
+        # Determine latitude range
+        if abs_lat <= 15:
+            lat_range = "0-15"
+        elif abs_lat <= 30:
+            lat_range = "15-30"
+        elif abs_lat <= 45:
+            lat_range = "30-45"
+        elif abs_lat <= 60:
+            lat_range = "45-60"
+        else:
+            lat_range = "60-75"
+        
+        # Get current month (0-11)
+        month = datetime.now().month - 1
+        
+        # Adjust for southern hemisphere (reverse seasons)
+        if latitude < 0:
+            month = (month + 6) % 12
+        
+        # Get UV index from lookup table
+        uv_index = MONTHLY_UV_DATA[lat_range][month]
+        
+        return float(uv_index)
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        self.async_write_ha_state()
+
+    async def async_added_to_hass(self) -> None:
+        """When entity is added to hass."""
+        await super().async_added_to_hass()
+        self.async_on_remove(
+            self.coordinator.async_add_listener(self._handle_coordinator_update)
+        )
+
+
+class GlowStatusSensor(SensorEntity):
+    """Representation of a Glow status sensor."""
+
+    _attr_has_entity_name = True
+    _attr_icon = "mdi:information-outline"
+
+    def __init__(
+        self,
+        coordinator,
+        entry: ConfigEntry,
+        skin_type: int,
+    ) -> None:
+        """Initialize the sensor."""
+        self.coordinator = coordinator
+        self.entry = entry
+        self.skin_type = skin_type
+        self._attr_unique_id = f"{entry.entry_id}_type_{skin_type}_status"
+        self._attr_name = f"Type {skin_type} status"
+        
+        # Device info for grouping
+        self._attr_device_info = {
+            "identifiers": {(DOMAIN, entry.entry_id)},
+            "name": "Glow: Sun Exposure for Vitamin D",
+            "manufacturer": "Glow",
+            "model": "Sun Exposure Calculator",
+            "sw_version": "1.0.0",
+        }
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the state of the sensor."""
+        try:
+            minutes = self._calculate_minutes()
+            if isinstance(minutes, str):
+                return minutes  # Return the status string
+            
+            # If we have a numeric value, return "OK" or descriptive status
+            if minutes < 15:
+                return "Quick exposure needed"
+            elif minutes < 30:
+                return "Moderate exposure needed"
+            elif minutes < 60:
+                return "Extended exposure needed"
+            else:
+                return "Long exposure needed"
+        except Exception as err:
+            _LOGGER.error("Error calculating status: %s", err)
+            return "Error"
+
+    @property
+    def extra_state_attributes(self) -> dict[str, any]:
+        """Return additional attributes."""
+        attributes = {
+            "skin_type": self.skin_type,
+            "skin_type_name": SKIN_TYPES[self.skin_type]["name"],
+        }
+        
+        # Add calculation details
+        try:
+            minutes = self._calculate_minutes()
+            if not isinstance(minutes, str):
+                attributes["minutes_needed"] = round(minutes, 1)
+                uv_index = self._get_uv_index()
+                attributes["uv_index"] = round(uv_index, 1)
+        except Exception as err:
+            _LOGGER.debug("Could not add calculation details: %s", err)
+        
+        return attributes
+
+    def _calculate_minutes(self) -> float | str:
+        """Calculate required minutes of sun exposure."""
+        # Check if sun is above horizon
+        sun_is_up = self._is_sun_up()
+        _LOGGER.debug(
+            "Sun status check for %s: %s",
+            self.entity_id,
+            "above horizon" if sun_is_up else "below horizon"
+        )
+        
+        if not sun_is_up:
+            return STATE_SUN_BELOW_HORIZON
+        
+        # Get UV index
+        uv_index = self._get_uv_index()
+        
+        # Check if UV is sufficient
+        if uv_index < 3:
+            return STATE_INSUFFICIENT_UVB
+        
+        # Get target IU
+        target_iu = self.entry.options.get(CONF_TARGET_IU, DEFAULT_TARGET_IU)
+        
+        # Get skin multiplier
+        skin_multiplier = SKIN_TYPES[self.skin_type]["multiplier"]
+        
+        # Calculate minutes
         minutes = (
             BASELINE_MINUTES 
             * (target_iu / 2000) 
