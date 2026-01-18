@@ -11,19 +11,13 @@ class GlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input=None) -> FlowResult:
+        """Handle the initial user step (now shows IU config)."""
         if user_input is not None:
             self._data = user_input
-            return await self.async_step_iu()
-
-        return self.async_show_form(step_id="user", data_schema=vol.Schema({}))
-
-    async def async_step_iu(self, user_input=None) -> FlowResult:
-        if user_input is not None:
-            self._data.update(user_input)
             return await self.async_step_uv()
 
         return self.async_show_form(
-            step_id="iu",
+            step_id="user",
             data_schema=vol.Schema(
                 {vol.Required(CONF_TARGET_IU, default=DEFAULT_TARGET_IU): vol.All(vol.Coerce(int), vol.Range(min=1000, max=4000))}
             ),
