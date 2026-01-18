@@ -1,52 +1,46 @@
-# Vitamin D Sun Exposure Integration for Home Assistant
+# Glow: Sun Exposure Calculator for Vitamin D (Home Assistant Integration)
 
-This custom integration calculates the estimated minutes of midday sun exposure needed to maintain sufficient Vitamin D levels, based on your Home Assistant location (latitude), current month, and configured skin type (Fitzpatrick scale 1-6). It creates a sensor entity showing the minutes required. Calculations are only performed when the sun is above the horizon (using HA's sun integration); otherwise, the sensor state is "unknown."
+This integration estimates minutes of sun exposure needed for sufficient Vitamin D, based on your location (latitude), month, Fitzpatrick skin type (1-6), and optional real-time UV index from a weather sensor. Creates 6 sensors (one per skin type) showing minutes required. Only calculates when sun is above horizon; otherwise, "unknown."
 
-Inspired by the [Sunshine Calendar chart](https://www.evergreen-life.co.uk/wp-content/uploads/2022/10/Vitamin-D-Sunshine-Calendar-for-worldwide-locations.png) and enhanced with data from [NIH UVB exposure studies](https://pmc.ncbi.nlm.nih.gov/articles/PMC11124381). Assumes 35% body exposure (e.g., shorts + T-shirt) for maintenance of ~50 nmol/L 25OHD levels.
+Based on [NIH UVB exposure study (PMC11124381)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11124381/) Table 3 (all-sky/average cloud conditions) and the [original sunshine calendar](https://www.evergreen-life.co.uk/wp-content/uploads/2022/10/Vitamin-D-Sunshine-Calendar-for-worldwide-locations.png). Assumes ~25% body exposure for ~50 nmol/L maintenance. Target IU configurable (default 2000).
 
 ## Features
-- Sensor: `sensor.vitamin_d_exposure_minutes` (unit: minutes)
-- Accounts for Fitzpatrick skin types (1-6), with scaling for darker skin.
-- Updates hourly, but only if sun is up.
-- "W" (Vitamin D Winter) periods show "Insufficient UVB" if no production possible.
+- 6 Sensors: `sensor.glow_type_1_minutes` to `sensor.glow_type_6_minutes` (unit: min)
+- Skin multipliers from NILU data.
+- Configurable target Vitamin D dose (1000-4000 IU).
+- Optional UV index for real-time adjustments (overrides monthly average).
+- Updates every 30 min if sun up.
+- "Insufficient UVB" for low-UV periods.
+- Sensor attributes: `recommended_time` (e.g., "Midday (11 AM - 3 PM local time)").
 
 ## Installation
-1. Install via HACS:
-   - In HACS > Integrations, click the three dots > Custom repositories.
-   - Add this repo URL: `https://github.com/yourusername/home-assistant-vitamin-d`
-   - Category: Integration
-   - Install the integration.
-2. Restart Home Assistant.
-3. Go to Settings > Devices & Services > Add Integration > Search for "Vitamin D Sun Exposure".
-4. Configure your skin type (1-6) in the setup flow.
+1. Via HACS: Add repo `https://github.com/yourusername/glow-sun-exposure-vitamin-d` as Integration.
+2. Restart HA.
+3. Add via Settings > Devices & Services > "Glow: Sun Exposure for Vitamin D".
+4. Configure target IU and optional UV sensor.
 
-Manual install: Copy the `custom_components/vitamin_d` folder to your HA `config/custom_components/` directory.
+Manual: Copy `custom_components/glow_vitd` to your config.
 
 ## Configuration
-During setup, select your Fitzpatrick skin type:
-- 1: Very fair, always burns
-- 2: Fair, burns easily
-- 3: Medium, burns moderately
-- 4: Olive, burns minimally
-- 5: Brown, rarely burns
-- 6: Black, never burns
+- **Target IU**: Slider (default 2000 IU).
+- **UV Sensor**: Select a sensor (e.g., `sensor.openuv_current_uv_index`).
+- Edit via Integration Options.
 
-No YAML config needed – all via UI. If you need to change skin type later, delete and re-add the integration.
+Disable unused sensors in entity registry.
 
 ## Example Usage
-- In Lovelace, add a entities card with `sensor.vitamin_d_exposure_minutes`.
-- Automation idea: Notify if minutes < 30 and sun is up – time to get outside!
+- Automation: If `sensor.glow_type_3_minutes` < 20 and sun up, notify "Get some glow!"
+- With UV: Adjusts dynamically.
 
-## Screenshots
-![Sensor Example](./images/sensor_example.png)
-*Sensor showing 15 minutes needed (e.g., for skin type 3 at 40°N in summer).*
+## Lovelace Examples
+Add to your dashboard YAML:
 
-![Config Flow](./images/config_flow.png)
-*Setup screen for selecting skin type.*
-
-## Development & Credits
-- Built with Home Assistant core scaffold.
-- Data sourced from NIH PMC11124381 and the provided sunshine calendar.
-- Issues/PRs welcome!
-
-If you encounter issues, check HA logs for "vitamin_d".
+### Basic Entities Card
+```yaml
+type: entities
+entities:
+  - entity: sensor.glow_type_3_minutes
+    name: My Skin Type (Type 3)
+  - entity: sensor.glow_type_5_minutes
+    name: Partner's Skin Type (Type 5)
+title: Vitamin D Exposure
