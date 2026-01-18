@@ -337,7 +337,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Disclaimer
 
-Again, for emphasis: **This tool is for educational purposes only.** Vitamin D status should be monitored by healthcare professionals through blood tests (25(OH)D levels). Sun exposure carries risks. Use sun protection after the calculated exposure time. When in doubt, consult your doctor.
+Again, for emphasis: **This tool is for educational purposes only.** Vitamin D status should be monitored by healthcare professionals through blood tests (25(OH)D levels). Sun exposure carries risks. Use sun protection after the calculated exposure time. When in doubt, consult your doctor. Thanks.
 
 ---
 
