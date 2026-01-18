@@ -4,12 +4,11 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-import voluptuous as vol
-
 from homeassistant import config_entries
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
+import voluptuous as vol
 
 from .const import (
     CONF_TARGET_IU,
@@ -44,16 +43,6 @@ class GlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 data={},
                 options=user_input,
             )
-
-        # Get list of UV sensors
-        uv_sensors = []
-        for entity_id, state in self.hass.states.async_all():
-            if (
-                entity_id.startswith("sensor.")
-                and state is not None
-                and ("uv" in entity_id.lower() or "ultraviolet" in entity_id.lower())
-            ):
-                uv_sensors.append(entity_id)
 
         data_schema = vol.Schema(
             {
