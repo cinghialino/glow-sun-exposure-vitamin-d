@@ -69,7 +69,7 @@ async def async_setup_entry(
 class GlowMinutesSensor(SensorEntity):
     """Representation of a Glow minutes sensor."""
 
-    _attr_has_entity_name = False
+    _attr_has_entity_name = True
     _attr_native_unit_of_measurement = UnitOfTime.MINUTES
     _attr_device_class = SensorDeviceClass.DURATION
     _attr_state_class = SensorStateClass.MEASUREMENT
@@ -85,8 +85,8 @@ class GlowMinutesSensor(SensorEntity):
         self.coordinator = coordinator
         self.entry = entry
         self.skin_type = skin_type
-        self._attr_unique_id = f"glow_sun_exposure_type_{skin_type}"
-        self._attr_name = f"Glow Sun Exposure Type {skin_type}"
+        self._attr_unique_id = f"glow_vitamin_d_sun_exposure_time_{skin_type}"
+        self._attr_name = f"Type {skin_type}"
         
         # Device info for grouping
         self._attr_device_info = {
@@ -270,8 +270,8 @@ class GlowUVIndexSensor(SensorEntity):
         """Initialize the sensor."""
         self.coordinator = coordinator
         self.entry = entry
-        self._attr_unique_id = f"glow_sun_exposure_uv_index"
-        self._attr_name = "Glow Sun Exposure UV Index"
+        self._attr_unique_id = f"glow_vitamin_d_sun_exposure_uv_index"
+        self._attr_name = "UV Index"
         
         # Device info for grouping
         self._attr_device_info = {
@@ -387,8 +387,8 @@ class GlowCalculationMethodSensor(SensorEntity):
         """Initialize the sensor."""
         self.coordinator = coordinator
         self.entry = entry
-        self._attr_unique_id = f"glow_sun_exposure_calculation_method"
-        self._attr_name = "Glow Sun Exposure Calculation Method"
+        self._attr_unique_id = f"glow_vitamin_d_sun_exposure_calculation_method"
+        self._attr_name = "Calculation Method"
         
         # Device info for grouping
         self._attr_device_info = {
@@ -457,8 +457,8 @@ class GlowStatusSensor(SensorEntity):
         self.coordinator = coordinator
         self.entry = entry
         self.skin_type = skin_type
-        self._attr_unique_id = f"glow_sun_exposure_type_{skin_type}_status"
-        self._attr_name = f"Glow Sun Exposure Type {skin_type} Status"
+        self._attr_unique_id = f"glow_vitamin_d_sun_exposure_time_{skin_type}_status"
+        self._attr_name = f"Type {skin_type} Status"
         
         # Device info for grouping
         self._attr_device_info = {
