@@ -104,24 +104,24 @@ You can change settings anytime:
 The integration creates 14 sensors:
 
 **Minutes Sensors:**
-- `sensor.glow_sun_exposure_type_1` - Very Fair skin (minutes)
-- `sensor.glow_sun_exposure_type_2` - Fair skin (minutes)
-- `sensor.glow_sun_exposure_type_3` - Medium skin (minutes)
-- `sensor.glow_sun_exposure_type_4` - Olive skin (minutes)
-- `sensor.glow_sun_exposure_type_5` - Brown skin (minutes)
-- `sensor.glow_sun_exposure_type_6` - Dark Brown/Black skin (minutes)
+- `sensor.glow_vitamin_d_sun_exposure_time_1` - Very Fair skin (minutes)
+- `sensor.glow_vitamin_d_sun_exposure_time_2` - Fair skin (minutes)
+- `sensor.glow_vitamin_d_sun_exposure_time_3` - Medium skin (minutes)
+- `sensor.glow_vitamin_d_sun_exposure_time_4` - Olive skin (minutes)
+- `sensor.glow_vitamin_d_sun_exposure_time_5` - Brown skin (minutes)
+- `sensor.glow_vitamin_d_sun_exposure_time_6` - Dark Brown/Black skin (minutes)
 
 **Status Sensors:**
-- `sensor.glow_sun_exposure_type_1_status` - Status description
-- `sensor.glow_sun_exposure_type_2_status` - Status description
-- `sensor.glow_sun_exposure_type_3_status` - Status description
-- `sensor.glow_sun_exposure_type_4_status` - Status description
-- `sensor.glow_sun_exposure_type_5_status` - Status description
-- `sensor.glow_sun_exposure_type_6_status` - Status description
+- `sensor.glow_vitamin_d_sun_exposure_time_1_status` - Status description
+- `sensor.glow_vitamin_d_sun_exposure_time_2_status` - Status description
+- `sensor.glow_vitamin_d_sun_exposure_time_3_status` - Status description
+- `sensor.glow_vitamin_d_sun_exposure_time_4_status` - Status description
+- `sensor.glow_vitamin_d_sun_exposure_time_5_status` - Status description
+- `sensor.glow_vitamin_d_sun_exposure_time_6_status` - Status description
 
 **Utility Sensors:**
-- `sensor.glow_sun_exposure_uv_index` - Current UV index being used
-- `sensor.glow_sun_exposure_calculation_method` - Data source (real-time sensor or monthly average)
+- `sensor.glow_vitamin_d_sun_exposure_uv_index` - Current UV index being used
+- `sensor.glow_vitamin_d_sun_exposure_calculation_method` - Data source (real-time sensor or monthly average)
 
 **Tip**: Disable unused skin types in Settings → Devices & Services → Glow → Entities to reduce clutter.
 
@@ -172,18 +172,18 @@ Check the sensor attributes for detailed information when state is descriptive.
 type: entities
 title: Daily Sun Exposure for Vitamin D
 entities:
-  - entity: sensor.glow_sun_exposure_type_3
+  - entity: sensor.glow_vitamin_d_sun_exposure_time_3
     name: Minutes Needed
     icon: mdi:timer-outline
-  - entity: sensor.glow_sun_exposure_type_3_status
+  - entity: sensor.glow_vitamin_d_sun_exposure_time_3_status
     name: Status
     icon: mdi:information-outline
-  - entity: sensor.glow_sun_exposure_uv_index
+  - entity: sensor.glow_vitamin_d_sun_exposure_uv_index
     name: UV Index
-  - entity: sensor.glow_sun_exposure_calculation_method
+  - entity: sensor.glow_vitamin_d_sun_exposure_calculation_method
     name: Data Source
   - type: attribute
-    entity: sensor.glow_sun_exposure_type_3
+    entity: sensor.glow_vitamin_d_sun_exposure_time_3
     attribute: recommended_time
     name: Best Time
 ```
@@ -197,7 +197,7 @@ trigger:
     at: "10:00:00"
 condition:
   - condition: state
-    entity_id: sensor.glow_sun_exposure_type_3_status
+    entity_id: sensor.glow_vitamin_d_sun_exposure_time_3_status
     state: "Quick exposure needed"
   - condition: state
     entity_id: sun.sun
@@ -207,9 +207,9 @@ action:
     data:
       title: "Get Your Glow! ☀️"
       message: >
-        You need {{ states('sensor.glow_sun_exposure_type_3') }} minutes 
+        You need {{ states('sensor.glow_vitamin_d_sun_exposure_time_3') }} minutes 
         of midday sun today for your Vitamin D. 
-        UV Index: {{ states('sensor.glow_sun_exposure_uv_index') }}
+        UV Index: {{ states('sensor.glow_vitamin_d_sun_exposure_uv_index') }}
 ```
 
 ### Conditional Card (Show Only When Sun is Up)
@@ -217,17 +217,17 @@ action:
 ```yaml
 type: conditional
 conditions:
-  - entity: sensor.glow_sun_exposure_type_3_status
+  - entity: sensor.glow_vitamin_d_sun_exposure_time_3_status
     state_not: "Sun below horizon"
 card:
   type: glance
   title: Sun Exposure Needed Today
   entities:
-    - entity: sensor.glow_sun_exposure_type_3
+    - entity: sensor.glow_vitamin_d_sun_exposure_time_3
       name: Minutes
-    - entity: sensor.glow_sun_exposure_type_3_status
+    - entity: sensor.glow_vitamin_d_sun_exposure_time_3_status
       name: Status
-    - entity: sensor.glow_sun_exposure_uv_index
+    - entity: sensor.glow_vitamin_d_sun_exposure_uv_index
       name: UV Index
 ```
 
