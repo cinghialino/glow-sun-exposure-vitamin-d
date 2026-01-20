@@ -1,5 +1,5 @@
 {
-  "name": "Glow: Vitamin D Sun Exposure",
+  "name": "Glow: Sun Exposure for Vitamin D",
   "render_readme": true,
   "domains": ["sensor"],
   "iot_class": "Calculated",
