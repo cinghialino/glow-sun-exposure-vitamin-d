@@ -39,7 +39,7 @@ class GlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._abort_if_unique_id_configured()
 
             return self.async_create_entry(
-                title="Glow: Vitamin D Sun Exposure",
+                title="Glow: Sun Exposure for Vitamin D",
                 data={},
                 options=user_input,
             )
