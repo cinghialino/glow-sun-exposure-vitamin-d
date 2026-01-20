@@ -52,7 +52,7 @@ class GlowVitaminDBaseSensor(SensorEntity):
         """Initialize the sensor."""
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, config_entry.entry_id)},
-            name="Vitamin D Sun Exposure",
+            name="Glow Vitamin D Sun Exposure",
             manufacturer="Glow",
             model="Sun Exposure Calculator",
             sw_version="2.0",
