@@ -1,6 +1,6 @@
 {
   "domain": "glow_vitd",
-  "name": "Glow: Sun Exposure for Vitamin D",
+  "name": "Glow: Vitamin D from sun exposure",
   "codeowners": ["@cinghialino"],
   "config_flow": true,
   "dependencies": [],
