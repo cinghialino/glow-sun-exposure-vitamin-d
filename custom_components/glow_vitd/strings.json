@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Configure Glow: Sun Exposure for Vitamin D",
-        "description": "Set up your Vitamin D sun exposure calculator. This integration creates 6 sensors (one for each Fitzpatrick skin type) that calculate the minutes of midday sun exposure needed to maintain your target Vitamin D level.\n\n**Important Medical Disclaimer:** This is for informational purposes only and is not medical advice. Always consult with a healthcare provider before making decisions about sun exposure. Excessive sun exposure increases skin cancer risk.",
+        "description": "Set up your Vitamin D sun exposure calculator. This integration creates sensors for each Fitzpatrick skin type that calculate the minutes of midday sun exposure needed to maintain your target Vitamin D level.\n\n**Important Medical Disclaimer:** This is for informational purposes only and is not medical advice. Always consult with a healthcare provider before making decisions about sun exposure. Excessive sun exposure increases skin cancer risk.",
         "data": {
           "target_iu": "Target Vitamin D production (IU)",
           "uv_sensor": "UV Index sensor (optional)"
@@ -33,5 +33,6 @@
         }
       }
     }
-  }
+  },
+  "title": "Glow: Sun Exposure for Vitamin D"
 }
