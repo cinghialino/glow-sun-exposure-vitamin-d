@@ -16,12 +16,7 @@ A Home Assistant custom integration that calculates the estimated minutes of mid
 
 **THIS IS NOT MEDICAL ADVICE.** This integration is for informational and educational purposes only. It does not replace professional medical advice, diagnosis, or treatment. Always consult with a qualified healthcare provider before making any decisions about sun exposure, supplementation, or health-related matters.
 
-**Skin Cancer Risk:** Excessive sun exposure increases the risk of skin cancer. This tool does not account for individual risk factors such as:
-- Personal or family history of skin cancer
-- Number and type of moles
-- Previous sunburns
-- Medications that increase photosensitivity
-- Other medical conditions
+**Skin Cancer Risk:** Excessive sun exposure increases the risk of skin cancer. This tool does not account for individual risk factors such as personal or family history of skin cancer, number and type of moles, previous sunburns, medications that increase photosensitivity, or other medical conditions.
 
 **Individual Variation:** Vitamin D production varies significantly between individuals due to age, weight, overall health, and other factors not captured by this calculator.
 
@@ -237,17 +232,17 @@ card:
 type: custom:mushroom-chips-card
 chips:
   - type: entity
-    entity: sensor.glow_type_3_minutes
+    entity: sensor.glow_vitamin_d_sun_exposure_time_3
     icon: mdi:sun-wireless
     content_info: state
-  - type: template
-    content: >
-      {% if states('sensor.glow_type_3_minutes') != 'unknown' %}
-        UV: {{ state_attr('sensor.glow_type_3_minutes', 'uv_index_used') }}
-      {% else %}
-        Sun down
-      {% endif %}
-    icon: mdi:weather-sunny-alert
+  - type: entity
+    entity: sensor.glow_vitamin_d_sun_exposure_time_3_status
+    icon: mdi:information
+    content_info: state
+  - type: entity
+    entity: sensor.glow_vitamin_d_sun_exposure_uv_index
+    icon: mdi:weather-sunny
+    content_info: state
 ```
 
 ## Understanding Your Results
@@ -328,6 +323,13 @@ This integration is based on:
 3. Check that time zone is set correctly
 4. Review the calculation in sensor attributes
 
+### Configuration Error (500 Internal Server Error)
+
+If you get this error when trying to configure the integration:
+1. This was a bug in earlier versions
+2. Update to the latest version (v1.0.2+)
+3. Remove and reinstall the integration
+
 ## Contributing
 
 Contributions are welcome! Please:
@@ -338,18 +340,6 @@ Contributions are welcome! Please:
 4. Test thoroughly
 5. Submit a pull request
 
-### Development Setup
-
-```bash
-# Clone the repo
-git clone https://github.com/cinghialino/glow-sun-exposure-vitamin-d.git
-
-# Symlink to your HA config
-ln -s $(pwd)/custom_components/glow_vitd ~/.homeassistant/custom_components/
-
-# Restart HA after changes
-```
-
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/cinghialino/glow-sun-exposure-vitamin-d/issues)
@@ -358,14 +348,7 @@ ln -s $(pwd)/custom_components/glow_vitd ~/.homeassistant/custom_components/
 
 ## Changelog
 
-### Version 1.0.0 (2026-01-18)
-- Initial release
-- 6 skin type sensors
-- Configurable target IU (1000-4000)
-- Optional UV sensor integration
-- Location-based monthly UV averages
-- Sun position awareness
-- Full HACS support
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ## License
 
@@ -378,10 +361,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Evergreen Life for the sunshine calendar visualization
 - Home Assistant community for integration development support
 
-## Disclaimer
-
-Again, for emphasis: **This tool is for educational purposes only.** Vitamin D status should be monitored by healthcare professionals through blood tests (25(OH)D levels). Sun exposure carries risks. Use sun protection after the calculated exposure time. When in doubt, consult your doctor.
-
 ---
+
+**Disclaimer**: This tool is for educational purposes only. Vitamin D status should be monitored by healthcare professionals through blood tests (25(OH)D levels). Sun exposure carries risks. Use sun protection after the calculated exposure time. When in doubt, consult your doctor.
 
 **Made with ☀️ for the Home Assistant community**
