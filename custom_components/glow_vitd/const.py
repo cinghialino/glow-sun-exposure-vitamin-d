@@ -1,6 +1,6 @@
 """Constants for Glow Vitamin D Sun Exposure integration."""
 
-DOMAIN = "glow_vitamin_d"
+DOMAIN = "glow_vitd"
 
 # Config flow
 CONF_TARGET_IU = "target_iu"
