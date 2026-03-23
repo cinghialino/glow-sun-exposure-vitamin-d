@@ -1,0 +1,41 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurar Glow: Exposición Solar para Vitamina D",
+        "description": "Configura tu calculadora de exposición solar para Vitamina D. Esta integración crea sensores para cada fototipo de la escala Fitzpatrick que calculan los minutos de exposición solar al mediodía necesarios para mantener tu nivel objetivo de Vitamina D.\n\n**Importante - Aviso médico:** Esto es solo con fines informativos y no constituye consejo médico. Consulta siempre con un profesional de la salud antes de tomar decisiones sobre la exposición solar. La exposición solar excesiva aumenta el riesgo de cáncer de piel.",
+        "data": {
+          "target_iu": "Producción objetivo de Vitamina D (UI)",
+          "body_exposure": "Porcentaje de exposición corporal (%)",
+          "uv_sensor": "Sensor de índice UV (opcional)"
+        },
+        "data_description": {
+          "target_iu": "Objetivo diario de Vitamina D en Unidades Internacionales (1000-4000 UI). Predeterminado: 2000 UI para mantenimiento de ~50 nmol/L en sangre.",
+          "body_exposure": "Porcentaje de superficie corporal expuesta al sol (5-100%). Predeterminado: 25% (cara, brazos, piernas).",
+          "uv_sensor": "Selecciona un sensor de índice UV para cálculos en tiempo real. Si no se selecciona, se usarán promedios mensuales para tu latitud."
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Esta integración ya está configurada. Solo se permite una instancia."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configurar Opciones de Glow",
+        "description": "Ajusta la configuración de tu calculadora de Vitamina D.",
+        "data": {
+          "target_iu": "Producción objetivo de Vitamina D (UI)",
+          "body_exposure": "Porcentaje de exposición corporal (%)",
+          "uv_sensor": "Sensor de índice UV (opcional)"
+        },
+        "data_description": {
+          "target_iu": "Objetivo diario de Vitamina D en Unidades Internacionales (1000-4000 UI)",
+          "body_exposure": "Porcentaje de superficie corporal expuesta al sol (5-100%)",
+          "uv_sensor": "Sensor de índice UV para cálculos en tiempo real"
+        }
+      }
+    }
+  }
+}

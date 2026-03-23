@@ -1,0 +1,41 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configura Glow: Esposizione Solare per la Vitamina D",
+        "description": "Configura il calcolatore di esposizione solare per la Vitamina D. Questa integrazione crea sensori per ogni fototipo della scala Fitzpatrick che calcolano i minuti di esposizione solare a mezzogiorno necessari per mantenere il livello target di Vitamina D.\n\n**Importante - Avvertenza medica:** Questo strumento è solo a scopo informativo e non costituisce consulenza medica. Consulta sempre un medico prima di prendere decisioni sull'esposizione solare. Un'eccessiva esposizione solare aumenta il rischio di cancro della pelle.",
+        "data": {
+          "target_iu": "Produzione target di Vitamina D (UI)",
+          "body_exposure": "Percentuale di esposizione corporea (%)",
+          "uv_sensor": "Sensore indice UV (opzionale)"
+        },
+        "data_description": {
+          "target_iu": "Obiettivo giornaliero di Vitamina D in Unità Internazionali (1000-4000 UI). Predefinito: 2000 UI per il mantenimento di ~50 nmol/L nel sangue.",
+          "body_exposure": "Percentuale di superficie corporea esposta al sole (5-100%). Predefinito: 25% (viso, braccia, gambe).",
+          "uv_sensor": "Seleziona un sensore di indice UV per calcoli in tempo reale. Se non selezionato, verranno utilizzate le medie mensili per la tua latitudine."
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Questa integrazione è già configurata. È consentita una sola istanza."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configura Opzioni Glow",
+        "description": "Modifica le impostazioni del calcolatore di Vitamina D.",
+        "data": {
+          "target_iu": "Produzione target di Vitamina D (UI)",
+          "body_exposure": "Percentuale di esposizione corporea (%)",
+          "uv_sensor": "Sensore indice UV (opzionale)"
+        },
+        "data_description": {
+          "target_iu": "Obiettivo giornaliero di Vitamina D in Unità Internazionali (1000-4000 UI)",
+          "body_exposure": "Percentuale di superficie corporea esposta al sole (5-100%)",
+          "uv_sensor": "Sensore di indice UV per calcoli in tempo reale"
+        }
+      }
+    }
+  }
+}

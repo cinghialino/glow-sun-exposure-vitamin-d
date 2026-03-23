@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2026-03-23
+
+### Added
+- **Automated test suite** with 68 tests covering calculations, coordinator, monthly UV lookup, constants, and edge cases
+- **Translations**: Italian (it), Spanish (es), German (de)
+
+### Fixed
+- `iot_class` casing in `hacs.json` — was `"Calculated"`, now `"calculated"` to match `manifest.json`
+
 ## [1.0.4] - 2026-03-23
 
 ### Changed
@@ -158,5 +167,6 @@ If upgrading from 1.0.0:
 
 ## Version History
 
+- **1.0.5** (2026-03-23): Automated tests, translations (it/es/de), iot_class fix
 - **1.0.4** (2026-03-23): Refactored coordinator, configurable body exposure, high-latitude support
 - **1.0.0** (2026-01-18): Initial public release

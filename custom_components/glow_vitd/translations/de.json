@@ -1,0 +1,41 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Glow konfigurieren: Sonnenexposition für Vitamin D",
+        "description": "Richte deinen Vitamin-D-Sonnenexpositionsrechner ein. Diese Integration erstellt Sensoren für jeden Fitzpatrick-Hauttyp, die die Minuten der Mittagssonnenexposition berechnen, die zur Aufrechterhaltung deines Vitamin-D-Zielspiegels benötigt werden.\n\n**Wichtiger medizinischer Hinweis:** Dies dient nur zu Informationszwecken und stellt keine medizinische Beratung dar. Konsultiere immer einen Arzt, bevor du Entscheidungen über Sonnenexposition triffst. Übermäßige Sonnenexposition erhöht das Hautkrebsrisiko.",
+        "data": {
+          "target_iu": "Vitamin-D-Zielproduktion (IE)",
+          "body_exposure": "Körperexposition in Prozent (%)",
+          "uv_sensor": "UV-Index-Sensor (optional)"
+        },
+        "data_description": {
+          "target_iu": "Tägliches Vitamin-D-Ziel in Internationalen Einheiten (1000-4000 IE). Standard: 2000 IE zur Aufrechterhaltung von ~50 nmol/L im Blut.",
+          "body_exposure": "Prozentsatz der dem Sonnenlicht ausgesetzten Körperoberfläche (5-100%). Standard: 25% (Gesicht, Arme, Beine).",
+          "uv_sensor": "Wähle einen UV-Index-Sensor für Echtzeitberechnungen. Wenn nicht ausgewählt, werden monatliche Durchschnittswerte für deinen Breitengrad verwendet."
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Diese Integration ist bereits konfiguriert. Es ist nur eine Instanz erlaubt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Glow-Optionen konfigurieren",
+        "description": "Passe die Einstellungen deines Vitamin-D-Rechners an.",
+        "data": {
+          "target_iu": "Vitamin-D-Zielproduktion (IE)",
+          "body_exposure": "Körperexposition in Prozent (%)",
+          "uv_sensor": "UV-Index-Sensor (optional)"
+        },
+        "data_description": {
+          "target_iu": "Tägliches Vitamin-D-Ziel in Internationalen Einheiten (1000-4000 IE)",
+          "body_exposure": "Prozentsatz der dem Sonnenlicht ausgesetzten Körperoberfläche (5-100%)",
+          "uv_sensor": "UV-Index-Sensor für Echtzeitberechnungen"
+        }
+      }
+    }
+  }
+}
