@@ -11,11 +11,15 @@ from homeassistant.helpers import selector
 import voluptuous as vol
 
 from .const import (
+    CONF_BODY_EXPOSURE,
     CONF_TARGET_IU,
     CONF_UV_SENSOR,
+    DEFAULT_BODY_EXPOSURE,
     DEFAULT_TARGET_IU,
     DOMAIN,
+    MAX_BODY_EXPOSURE,
     MAX_TARGET_IU,
+    MIN_BODY_EXPOSURE,
     MIN_TARGET_IU,
 )
 
@@ -34,7 +38,6 @@ class GlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            # Check if already configured
             await self.async_set_unique_id("glow_vitd_integration")
             self._abort_if_unique_id_configured()
 
@@ -49,6 +52,9 @@ class GlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(
                     CONF_TARGET_IU, default=DEFAULT_TARGET_IU
                 ): vol.All(vol.Coerce(int), vol.Range(min=MIN_TARGET_IU, max=MAX_TARGET_IU)),
+                vol.Required(
+                    CONF_BODY_EXPOSURE, default=DEFAULT_BODY_EXPOSURE
+                ): vol.All(vol.Coerce(int), vol.Range(min=MIN_BODY_EXPOSURE, max=MAX_BODY_EXPOSURE)),
                 vol.Optional(CONF_UV_SENSOR): selector.EntitySelector(
                     selector.EntitySelectorConfig(
                         domain="sensor",
@@ -62,10 +68,6 @@ class GlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=data_schema,
             errors=errors,
-            description_placeholders={
-                "min_iu": str(MIN_TARGET_IU),
-                "max_iu": str(MAX_TARGET_IU),
-            },
         )
 
     @staticmethod
@@ -88,13 +90,17 @@ class GlowOptionsFlowHandler(config_entries.OptionsFlow):
             return self.async_create_entry(title="", data=user_input)
 
         options = self.config_entry.options
-        
+
         data_schema = vol.Schema(
             {
                 vol.Required(
                     CONF_TARGET_IU,
                     default=options.get(CONF_TARGET_IU, DEFAULT_TARGET_IU),
                 ): vol.All(vol.Coerce(int), vol.Range(min=MIN_TARGET_IU, max=MAX_TARGET_IU)),
+                vol.Required(
+                    CONF_BODY_EXPOSURE,
+                    default=options.get(CONF_BODY_EXPOSURE, DEFAULT_BODY_EXPOSURE),
+                ): vol.All(vol.Coerce(int), vol.Range(min=MIN_BODY_EXPOSURE, max=MAX_BODY_EXPOSURE)),
                 vol.Optional(
                     CONF_UV_SENSOR,
                     default=options.get(CONF_UV_SENSOR),

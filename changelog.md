@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-03-23
+
+### Changed
+- **Refactored**: All calculations now run in the coordinator instead of being duplicated across each sensor class. Sensors read from shared coordinator data, reducing redundant work and improving maintainability.
+- **Refactored**: Extracted shared device info and coordinator listener logic into a `GlowBaseSensor` base class, eliminating boilerplate across all sensor classes.
+- Minimum UV index threshold is now an explicit constant (`MIN_UV_INDEX = 3`).
+- Version string is now a single constant (`VERSION`) used consistently across device info and manifest.
+
+### Added
+- **Configurable body exposure percentage** (5-100%, default 25%). Previously hardcoded at 25%. Available in both initial setup and options flow.
+- **Latitude > 75° support**: Added `"75-90"` range to the monthly UV lookup table for Arctic/Antarctic locations.
+- `configuration_url` in device info linking to the GitHub documentation.
+
+### Removed
+- Deleted unused `options_flow.py` (dead code referencing non-existent `CONF_UV_ENTITY`). The options flow in `config_flow.py` was already the active implementation.
+
+### Fixed
+- **Inconsistent `sw_version`**: Device info previously showed "1.0.2" in some sensors and "1.0.0" in others. Now all sensors use the same `VERSION` constant.
+- Device name is now consistently "Glow: Sun Exposure for Vitamin D" across all sensors (was "Glow" in some).
+
 ## [1.0.2] - 2026-01-18
 
 ### Changed
@@ -138,4 +158,5 @@ If upgrading from 1.0.0:
 
 ## Version History
 
+- **1.0.4** (2026-03-23): Refactored coordinator, configurable body exposure, high-latitude support
 - **1.0.0** (2026-01-18): Initial public release

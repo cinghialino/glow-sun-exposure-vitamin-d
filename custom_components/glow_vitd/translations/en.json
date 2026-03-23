@@ -3,13 +3,15 @@
     "step": {
       "user": {
         "title": "Configure Glow: Sun Exposure for Vitamin D",
-        "description": "Set up your Vitamin D sun exposure calculator. This integration creates 6 sensors (one for each Fitzpatrick skin type) that calculate the minutes of midday sun exposure needed to maintain your target Vitamin D level.\n\n**Important Medical Disclaimer:** This is for informational purposes only and is not medical advice. Always consult with a healthcare provider before making decisions about sun exposure. Excessive sun exposure increases skin cancer risk.",
+        "description": "Set up your Vitamin D sun exposure calculator. This integration creates sensors for each Fitzpatrick skin type that calculate the minutes of midday sun exposure needed to maintain your target Vitamin D level.\n\n**Important Medical Disclaimer:** This is for informational purposes only and is not medical advice. Always consult with a healthcare provider before making decisions about sun exposure. Excessive sun exposure increases skin cancer risk.",
         "data": {
           "target_iu": "Target Vitamin D production (IU)",
+          "body_exposure": "Body exposure percentage (%)",
           "uv_sensor": "UV Index sensor (optional)"
         },
         "data_description": {
-          "target_iu": "Daily Vitamin D target in International Units (1000-4000 IU). Default: 2000 IU for maintenance of ~50 nmol/L blood level with 25% body exposure.",
+          "target_iu": "Daily Vitamin D target in International Units (1000-4000 IU). Default: 2000 IU for maintenance of ~50 nmol/L blood level.",
+          "body_exposure": "Percentage of body surface area exposed to the sun (5-100%). Default: 25% (face, arms, legs).",
           "uv_sensor": "Select a UV index sensor for real-time calculations. If not selected, will use monthly averages for your latitude."
         }
       }
@@ -25,10 +27,12 @@
         "description": "Adjust your Vitamin D calculator settings.",
         "data": {
           "target_iu": "Target Vitamin D production (IU)",
+          "body_exposure": "Body exposure percentage (%)",
           "uv_sensor": "UV Index sensor (optional)"
         },
         "data_description": {
           "target_iu": "Daily Vitamin D target in International Units (1000-4000 IU)",
+          "body_exposure": "Percentage of body surface area exposed to the sun (5-100%)",
           "uv_sensor": "UV index sensor for real-time calculations"
         }
       }
